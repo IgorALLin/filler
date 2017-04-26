@@ -15,26 +15,16 @@
 void	ft_simple_try_rev(t_st *st)
 {
 	int		i;
-	int		x;
-	int		y;
 
-	x = st->bx - 1;
-	y = st->by;
-	i = 15000;
+	i = st->bx * st->py - 1;
 	while(i >= 0)
 	{
-		if (st->board[i] == '\n')
+        if (ft_try(st, i) == 1)
         {
-        	y--;
-        	x = st->bx;;
-        }
-        else if (ft_try(st, x, i) == 1)
-        {
-            st->resy = y;
-            st->resx = x;
+			st->resy = i / st->bx;
+			st->resx = i % st->bx;
             return ;
         }
-        x--;
         i--;
 	}
 }
@@ -42,12 +32,8 @@ void	ft_simple_try_rev(t_st *st)
 void	ft_simple_try(t_st *st)
 {
 	int		i;
-	int		x;
-	int		y;
 	
 	i = 0;
-	x = 0;
-	y = 0;
 	if (st->pos == 2)
 	{
 		ft_simple_try_rev(st);
@@ -55,18 +41,12 @@ void	ft_simple_try(t_st *st)
 	}
     while(st->board[i])
     {
-        if (st->board[i] == '\n')
+        if (ft_try(st, i) == 1)
         {
-        	y++;
-        	x = -1;
-        }
-        else if (ft_try(st, x, i) == 1)
-        {
-            st->resy = y;
-            st->resx = x;
+            st->resy = i / st->bx;
+			st->resx = i % st->bx;
             return ;
         }
-        x++;
         i++;
     }
 }

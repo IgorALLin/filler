@@ -49,12 +49,11 @@ void	ft_piece(t_st *st)
 	int		i;
 
 	i = -1;
-	st->piece = ft_strnew(1000);
+	st->piece = ft_strnew(st->px * st->py);
 	while (++i < st->py)
 	{
 		get_next_line(0, &line);
 		st->piece = ft_strjoin(st->piece, line);
-		st->piece = ft_add_char(st->piece, '\n');
 		free(line);
 	}
 }
@@ -67,14 +66,13 @@ void	ft_board(t_st *st)
 	
 	i = -1;
 	get_next_line(0, &line);
-	st->board = ft_strnew(50000);
+	st->board = ft_strnew(st->bx * st->by);
 	while (++i < st->by)
 	{
 		get_next_line(0, &line);
 		tmp = line;
 		tmp += 4;
 		st->board = ft_strjoin(st->board, tmp);
-		st->board = ft_add_char(st->board, '\n');
 		free(line);
 	}
 }
