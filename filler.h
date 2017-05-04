@@ -33,7 +33,5 @@ int		ft_manhattan(t_st *st, int i);
 int		ft_try(t_st *st, int i);
 void	ft_print_res(t_st *st);
 int		ft_modul(t_st *st, int i, int in);
-int		ft_alarm(t_st *st);
-void	ft_map00(t_st *st);
 
 #endif

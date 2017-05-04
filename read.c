@@ -15,32 +15,19 @@ void    ft_player(char *line, t_st *st)
 
 void		ft_size(t_st *st, char *line, int i)
 {
-	char	*num;
-	int		in;
+	char 	**num;
 
-	in = i;
-	num = ft_strnew(1);
-	while(ft_isdigit(line[in]) == 1)
-	{
-		num = ft_add_char(num, line[in]);
-		in++;
-	}
+	num = ft_strsplit(line, ' ');
 	if (i == 8)
-		st->by = ft_atoi(num);
-	else
-		st->py = ft_atoi(num);
-	while(ft_isdigit(line[in]) != 1)
-		in++;
-	num = ft_strnew(1);
-	while(ft_isdigit(line[in]) == 1)
 	{
-		num = ft_add_char(num, line[in]);
-		in++;
+		st->by = ft_atoi(num[1]);
+		st->bx = ft_atoi(num[2]);
 	}
-	if (i == 8)
-		st->bx = ft_atoi(num);
-	else
-		st->px = ft_atoi(num);
+	if (i == 6)
+	{
+		st->py = ft_atoi(num[1]);
+		st->px = ft_atoi(num[2]);
+	}
 }
 
 void	ft_piece(t_st *st)
@@ -48,13 +35,16 @@ void	ft_piece(t_st *st)
 	char	*line;
 	int		i;
 
-	i = -1;
+	i = 0;
 	st->piece = ft_strnew(st->px * st->py);
-	while (++i < st->py)
+	while (i < st->py)
 	{
-		get_next_line(0, &line);
-		st->piece = ft_strjoin(st->piece, line);
-		free(line);
+		if (get_next_line(0, &line) > 0)
+		{
+			st->piece = ft_strjoin(st->piece, line);
+			free(line);
+		}
+		i++;	
 	}
 }
 
@@ -64,16 +54,19 @@ void	ft_board(t_st *st)
 	char	*line;
 	char 	*tmp;
 	
-	i = -1;
+	i = 0;
 	get_next_line(0, &line);
 	st->board = ft_strnew(st->bx * st->by);
-	while (++i < st->by)
+	while (i < st->by)
 	{
-		get_next_line(0, &line);
-		tmp = line;
-		tmp += 4;
-		st->board = ft_strjoin(st->board, tmp);
-		free(line);
+		if (get_next_line(0, &line) > 0)
+		{	
+			tmp = line;
+			tmp += 4;
+			st->board = ft_strjoin(st->board, tmp);
+			free(line);
+		}
+		i++;
 	}
 }
 
@@ -83,7 +76,7 @@ int		ft_reader(t_st *st)
 	int		i;
 
 	i = 0;
-	while (get_next_line(0, &line) != 0)
+	while (get_next_line(0, &line) > 0)
 	{
 		if ((ft_strstr(line, "/filler]") != NULL))
 		{

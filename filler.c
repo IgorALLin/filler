@@ -39,12 +39,7 @@ int		main(void)
 	t_st	*st;
 
 	st = (t_st *)malloc(sizeof(*st));
-	st->pos = 0;
 	while (ft_reader(st) != 0)
-	{	
-		if (st->pos == 0)
-			ft_pos(st);
 		ft_game(st);
-	}	
 	return(0);
 }

@@ -5,87 +5,76 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ichebota <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/01/31 15:25:33 by ichebota          #+#    #+#             */
-/*   Updated: 2017/01/31 15:27:26 by ichebota         ###   ########.fr       */
+/*   Created: 2017/05/04 20:58:01 by ichebota          #+#    #+#             */
+/*   Updated: 2017/05/04 20:58:04 by ichebota         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-t_list	*ft_newfile(int fd)
+int		ft_ret(int fd, int rd, char *str)
 {
-	t_list	*list;
-
-	list = (t_list*)malloc(sizeof(t_list));
-	list->content = ft_strnew(0);
-	list->content_size = fd;
-	list->next = NULL;
-	return (list);
+	if (fd == -1 || read(fd, str, 0) == -1)
+		return (-1);
+	if (!str && rd == 0)
+		return (0);
+	return (1);
 }
 
-t_list	*ft_read_fd(t_list **files, int fd)
+char	*ft_next(char *tmp, char *str, char *ptr, char **line)
 {
-	t_list *ret;
+	char		*buf;
 
-	ret = *files;
-	while (ret)
+	if (ptr)
+		*ptr = '\0';
+	buf = ft_strjoin(tmp, str);
+	ft_strdel(&tmp);
+	tmp = buf;
+	if (!ptr)
+		ft_strdel(&str);
+	if (ptr)
 	{
-		if (ret->content_size == (unsigned long)fd)
-			return (ret);
-		ret = ret->next;
+		*line = tmp;
+		return (ft_strdup(ptr + 1));
 	}
-	ret = ft_newfile(fd);
-	ft_lstadd(files, ret);
-	return (ret);
+	return (tmp);
 }
 
-int		ft_joincontent(int fd, void **content)
+char	*ft_newstr(int *rd, int fd, char *str)
 {
-	char	buf[BUFF_SIZE + 1];
-	int		rd;
-	char	*tmp;
-	char	*ptr;
-
-	while ((rd = read(fd, buf, BUFF_SIZE)))
+	if (!str)
 	{
-		if (rd < 0)
-			return (-1);
-		buf[rd] = '\0';
-		tmp = ft_strjoin(*content, buf);
-		ft_memdel(content);
-		*content = tmp;
-		ft_bzero(buf, ft_strlen(buf));
-		if ((ptr = ft_strchr(*content, '\n')))
-			break ;
+		str = ft_strnew(BUFF_SIZE);
+		*rd = read(fd, str, BUFF_SIZE);
 	}
-	return (rd);
+	return (str);
 }
 
 int		get_next_line(const int fd, char **line)
 {
-	static t_list	*files;
-	t_list			*h;
-	int				rd;
-	char			*ptr;
+	static char	*str;
+	char		*tmp;
+	int			rd;
 
-	h = ft_read_fd(&files, fd);
-	if (fd < 0 || BUFF_SIZE < 0 || line == NULL ||
-			(rd = ft_joincontent(fd, &h->content)) < 0)
-		return (-1);
-	if (rd == 0 && !ft_strlen(h->content))
-		return (0);
-	if ((ptr = ft_strchr(h->content, '\n')))
+	if ((rd = ft_ret(fd, rd, str)) != 1)
+		return (ft_ret(fd, rd, str));
+	tmp = ft_strnew(0);
+	while (rd)
 	{
-		*ptr = '\0';
-		*line = ft_strdup(h->content);
-		ft_memmove(h->content, ptr + 1, ft_strlen(ptr + 1) + 1);
-		return (1);
+		str = ft_newstr(&rd, fd, str);
+		if (ft_strchr(str, '\n'))
+		{
+			str = ft_next(tmp, str, ft_strchr(str, '\n'), line);
+			return (1);
+		}
+		else
+		{
+			tmp = ft_next(tmp, str, ft_strchr(str, '\n'), line);
+			str = NULL;
+		}
+		if (!rd && !str && *tmp == '\0')
+			return (0);
 	}
-	if (!(ptr = ft_strchr(h->content, '\n')) && ft_strlen(h->content) != 0)
-	{
-		*line = ft_strdup(h->content);
-		ft_bzero(h->content, ft_strlen(h->content));
-		return (1);
-	}
-	return (0);
+	*line = tmp;
+	return (1);
 }

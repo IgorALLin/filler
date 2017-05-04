@@ -71,16 +71,6 @@ void	ft_game(t_st *st)
 	sum = 0;
 	st->resx = 0;
 	st->resy = 0;
-	if (st->by == 15)
-	{
-		ft_map00(st);
-		return ;
-	}
-	if (ft_alarm(st) == 1)
-	{
-		ft_print_res(st);
-		return ;	
-	}
 	while(st->by - i / st->bx >= st->py)
 	{
 		if (ft_try(st, i) == 1)
