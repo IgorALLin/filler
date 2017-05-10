@@ -10,96 +10,102 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "filler.h"
+#include "includes/filler.h"
 
-int		ft_diagonal(t_st *st, int i, int sum)
-{
-	int		res;
-	int		in;
-	int		i1;
-
-	in = 0;
-	i1 = i;
-	res = 0;
-	while (st->piece[in])
-	{
-		if (in != 0 && in % st->px == 0)
-			i1 = i1 + st->bx - st->px;
-		if (st->piece[in] == '*' && st->board[i1] == '.')
-			res = res + ft_modul(st, i1, 16);
-		i1++;
-		in++;
-	}
-	if (sum == 0 || res < sum)
-	{
-		sum = res;
-		st->resy = i / st->bx;
-		st->resx = i % st->bx;
-	}
-	return (sum);
-}
-
-int		ft_check_min(t_st *st)
+int		ft_checkmax(t_st *st)
 {
 	int		i;
 
 	i = 0;
 	while (st->board[i])
 	{
-		if (i % st->bx == 0 && ft_check_enemy(st->player, st->board[i]) == 2)
+		if ((i + 1) % st->bx == 0 &&
+			ft_check_enemy(st->player, st->board[i]) == 2)
+			return (1);
+		else if (i < st->bx && ft_check_enemy(st->player, st->board[i]) == 2)
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int		ft_kill_him(t_st *st, int i, int sum)
-{
-	int		res;
-	int		in;
-	int		i1;
-
-	in = 0;
-	i1 = i;
-	res = -1;
-	while (st->piece[in])
-	{
-		if (in != 0 && in % st->px == 0)
-			i1 = i1 + st->bx - st->px;
-		if ((st->piece[in] == '*' && st->board[i1] == '.') &&
-			(res == -1 || i1 % st->bx < res))
-			res = i1 % st->bx;
-		i1++;
-		in++;
-	}
-	if (st->resy == 0 || res < sum)
-	{
-		sum = res;
-		st->resy = i / st->bx;
-		st->resx = i % st->bx;
-	}	
-	return (sum);
-}
-
-void	ft_map00(t_st *st)
+int		ft_map00_piece(t_st *st, t_cors *cors)
 {
 	int		i;
-	int		sum;
-	int		minx;
+	int		i1;
+	int		res;
 
 	i = 0;
-	sum = 0;
-	minx = ft_check_min(st);
-	while(st->by - i / st->bx >= st->py)
+	res = 0;
+	i1 = cors->i;
+	while (st->piece[i])
 	{
-		if (ft_try(st, i) == 1)
+		if (i != 0 && i % st->px == 0)
+			i1 = i1 + st->bx - st->px;
+		if (i1 == 136 && st->board[i1] == '.' && st->piece[i] == '*')
 		{
-			if (minx == 0)
-				sum = ft_kill_him(st, i, sum);
-			else
-				sum = ft_diagonal(st, i, sum);
+			st->resx = cors->x;
+			st->resy = cors->y;
+			return (1);
 		}
-		i++;	
+		if (st->piece[i] == '*' && st->board[i1] == '.')
+			res = res + ft_modul(st, i1, 63);
+		i1++;
+		i++;
 	}
-	ft_print_res(st);
+	ft_put_res(st, cors, res);
+	return (0);
+}
+
+int		ft_up(t_st *st)
+{
+	int		i;
+
+	i = 0;
+	while (st->board[i])
+	{
+		if (ft_check_enemy(st->player, st->board[i]) == 1)
+			return (0);
+		if (ft_check_enemy(st->player, st->board[i]) == 2)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+void	ft_map002(t_st *st, t_cors *cors)
+{
+	if (ft_up(st) == 1)
+	{
+		ft_manhattan(st, cors);
+		return ;
+	}
+	if (cors)
+	{
+		st->resx = cors->x;
+		st->resy = cors->y;
+	}
+	while (cors)
+	{
+		if (cors->y <= st->resy)
+		{
+			st->resy = cors->y;
+			st->resx = cors->x;
+		}
+		cors = cors->next;
+	}
+}
+
+void	ft_map00(t_st *st, t_cors *cors)
+{
+	if (st->player == 2)
+		ft_map002(st, cors);
+	if (ft_checkmax(st) == 1)
+		ft_manhattan(st, cors);
+	while (cors)
+	{
+		if (ft_map00_piece(st, cors) == 1)
+			return ;
+		cors = cors->next;
+	}
 }

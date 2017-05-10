@@ -1,6 +1,18 @@
-#include "filler.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   read.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ichebota <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/05/09 18:58:40 by ichebota          #+#    #+#             */
+/*   Updated: 2017/05/09 18:58:42 by ichebota         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void    ft_player(char *line, t_st *st)
+#include "includes/filler.h"
+
+void	ft_player(char *line, t_st *st)
 {
 	int		i;
 
@@ -9,13 +21,13 @@ void    ft_player(char *line, t_st *st)
 		i++;
 	if (line[i] == '1')
 		st->player = 1;
-	else	
+	else
 		st->player = 2;
 }
 
-void		ft_size(t_st *st, char *line, int i)
+void	ft_size(t_st *st, char *line, int i)
 {
-	char 	**num;
+	char	**num;
 
 	num = ft_strsplit(line, ' ');
 	if (i == 8)
@@ -44,7 +56,7 @@ void	ft_piece(t_st *st)
 			st->piece = ft_strjoin(st->piece, line);
 			free(line);
 		}
-		i++;	
+		i++;
 	}
 }
 
@@ -52,15 +64,15 @@ void	ft_board(t_st *st)
 {
 	int		i;
 	char	*line;
-	char 	*tmp;
-	
+	char	*tmp;
+
 	i = 0;
 	get_next_line(0, &line);
 	st->board = ft_strnew(st->bx * st->by);
 	while (i < st->by)
 	{
 		if (get_next_line(0, &line) > 0)
-		{	
+		{
 			tmp = line;
 			tmp += 4;
 			st->board = ft_strjoin(st->board, tmp);
@@ -93,7 +105,7 @@ int		ft_reader(t_st *st)
 			ft_size(st, line, 6);
 			ft_piece(st);
 			return (1);
-		}			
+		}
 	}
 	return (0);
 }

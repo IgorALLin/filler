@@ -10,11 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = liba.a
+NAME = libfiller.a
 HEADER = filler.h
-SRC = *.c libft/*.c
-OBJ = *.o
-FLAGS = -c -g
+SRC = filler.c ft_atoi.c ft_isascii.c ft_isdigit.c ft_memalloc.c ft_memset.c ft_putchar.c ft_putnbr.c ft_putstr.c ft_strcat.c ft_strchr.c ft_strcpy.c ft_strdel.c ft_strdup.c ft_strjoin.c ft_strlen.c ft_strnew.c ft_strsplit.c ft_strstr.c ft_strsub.c game.c get_next_line.c manhattan.c map00.c read.c utilities.c
+OBJ = $(SRC:.c=.o)
+FLAGS = -c
 CC = gcc
 
 all: $(NAME)
@@ -22,7 +22,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(CC) $(FLAGS) $(SRC)
 	ar rc $(NAME) $(OBJ)
-	$(CC) filler.c -o filler -L. -la
+	$(CC) filler.c -o filler -L. -lfiller
 clean:
 		@rm -f $(OBJ)
 fclean:
@@ -32,3 +32,4 @@ re:
 		make fclean 
 		make all
 		@ar rc $(NAME) $(OBJ)
+		make clean

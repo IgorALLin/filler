@@ -1,19 +1,18 @@
-#include "filler.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   filler.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ichebota <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/05/09 19:05:06 by ichebota          #+#    #+#             */
+/*   Updated: 2017/05/09 19:05:07 by ichebota         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int		ft_check_enemy(int player, char ch)
-{
-	if (player == 1 && (ch == 'x' || ch == 'X'))
-		return(1);
-	else if(player == 2 && (ch == 'o' || ch == 'O'))
-		return (1);
-	else if (player == 2 && (ch == 'x' || ch == 'X'))
-		return(2);
-	else if(player == 1 && (ch == 'o' || ch == 'O'))
-		return (2);
-	return (0);
-}
+#include "includes/filler.h"
 
-void		ft_pos(t_st *st)
+void	ft_pos(t_st *st)
 {
 	int		i;
 
@@ -39,7 +38,13 @@ int		main(void)
 	t_st	*st;
 
 	st = (t_st *)malloc(sizeof(*st));
+	st->pos = 0;
 	while (ft_reader(st) != 0)
+	{
+		if (st->pos == 0)
+			ft_pos(st);
 		ft_game(st);
-	return(0);
+		ft_print_res(st);
+	}
+	return (0);
 }

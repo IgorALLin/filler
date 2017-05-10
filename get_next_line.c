@@ -10,14 +10,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "includes/filler.h"
 
-int		ft_ret(int fd, int rd, char *str)
+int		ft_ret(int fd, int *rd, char *str)
 {
 	if (fd == -1 || read(fd, str, 0) == -1)
+	{
+		*rd = -1;
 		return (-1);
+	}
 	if (!str && rd == 0)
+	{
+		*rd = 0;
 		return (0);
+	}
+	*rd = 1;
 	return (1);
 }
 
@@ -56,8 +63,8 @@ int		get_next_line(const int fd, char **line)
 	char		*tmp;
 	int			rd;
 
-	if ((rd = ft_ret(fd, rd, str)) != 1)
-		return (ft_ret(fd, rd, str));
+	if (ft_ret(fd, &rd, str) <= 0)
+		return (rd);
 	tmp = ft_strnew(0);
 	while (rd)
 	{

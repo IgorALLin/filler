@@ -1,12 +1,16 @@
-#include "filler.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   game.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ichebota <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/05/09 18:57:02 by ichebota          #+#    #+#             */
+/*   Updated: 2017/05/09 18:57:04 by ichebota         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	ft_print_res(t_st *st)
-{
-	ft_putnbr(st->resy);
-	ft_putchar(' ');
-	ft_putnbr(st->resx);
-	ft_putchar('\n');
-}
+#include "includes/filler.h"
 
 int		ft_try(t_st *st, int i)
 {
@@ -17,11 +21,11 @@ int		ft_try(t_st *st, int i)
 	over = 0;
 	if (st->bx - i % st->bx < st->px)
 		return (0);
-	while(st->piece[in])
+	while (st->piece[in])
 	{
 		if (in != 0 && in % st->px == 0)
 			i = i + st->bx - st->px;
-		if(over > 1 || (st->piece[in] == '*' &&
+		if (over > 1 || (st->piece[in] == '*' &&
 			ft_check_enemy(st->player, st->board[i]) == 1))
 			return (0);
 		if (st->piece[in] == '*' &&
@@ -35,47 +39,41 @@ int		ft_try(t_st *st, int i)
 	return (0);
 }
 
-int		ft_next_piece(t_st *st, int i, int sum)
+void	ft_next_piece(t_st *st, t_cors *cors)
 {
-	int		res;
-	int		in;
-	int		i1;
+	if (st->by == 15)
+		ft_map00(st, cors);
+	else
+		ft_manhattan(st, cors);
+}
 
-	in = 0;
-	i1 = i;
-	res = 0;
-	while (st->piece[in])
-	{
-		if (in != 0 && in % st->px == 0)
-			i1 = i1 + st->bx - st->px;
-		if (st->piece[in] == '*' && st->board[i1] == '.')
-			res = res + ft_manhattan(st, i1);
-		i1++;
-		in++;
-	}
-	if (sum == 0 || res < sum)
-	{
-		sum = res;
-		st->resy = i / st->bx;
-		st->resx = i % st->bx;
-	}
-	return (sum);
+void	ft_add_cors(t_cors **head, int data, t_st *st)
+{
+	t_cors	*tmp;
+
+	tmp = (t_cors *)malloc(sizeof(t_cors));
+	tmp->i = data;
+	tmp->x = data % st->bx;
+	tmp->y = data / st->bx;
+	tmp->next = (*head);
+	(*head) = tmp;
 }
 
 void	ft_game(t_st *st)
 {
 	int		i;
-	int		sum;
+	t_cors	*cors;
 
+	cors = NULL;
 	i = 0;
-	sum = 0;
+	st->sum = 0;
 	st->resx = 0;
 	st->resy = 0;
-	while(st->by - i / st->bx >= st->py)
+	while (st->by - i / st->bx >= st->py)
 	{
 		if (ft_try(st, i) == 1)
-			sum = ft_next_piece(st, i, sum);
-		i++;	
+			ft_add_cors(&cors, i, st);
+		i++;
 	}
-	ft_print_res(st);
+	ft_next_piece(st, cors);
 }

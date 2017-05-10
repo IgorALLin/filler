@@ -1,18 +1,16 @@
-#include "filler.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   manhattan.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ichebota <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/05/09 19:03:25 by ichebota          #+#    #+#             */
+/*   Updated: 2017/05/09 19:03:27 by ichebota         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int		ft_modul(t_st *st, int i, int in)
-{
-	int		num1;
-	int		num2;
-
-	num1 = i / st->bx - in / st->bx;
-	num2 = i % st->bx - in % st->bx;
-	if (num1 < 0)
-		num1 = -num1;
-	if (num2 < 0)
-		num2 = -num2;
-	return (num1 + num2);
-}
+#include "includes/filler.h"
 
 int		ft_sum2(t_st *st, int i)
 {
@@ -42,11 +40,11 @@ int		ft_sum1(t_st *st, int i)
 	return (0);
 }
 
-int		ft_manhattan(t_st *st, int i)
+int		ft_next_point(t_st *st, int i)
 {
 	int		res1;
 	int		res2;
-	
+
 	res1 = ft_sum1(st, i);
 	res2 = ft_sum2(st, i);
 	if (res1 == 0)
@@ -56,4 +54,29 @@ int		ft_manhattan(t_st *st, int i)
 	else if (res1 < res2)
 		return (res1);
 	return (res2);
+}
+
+void	ft_manhattan(t_st *st, t_cors *cors)
+{
+	int		res;
+	int		i1;
+	int		i;
+
+	while (cors)
+	{
+		res = 0;
+		i1 = cors->i;
+		i = 0;
+		while (st->piece[i])
+		{
+			if (i != 0 && i % st->px == 0)
+				i1 = i1 + st->bx - st->px;
+			if (st->piece[i] == '*' && st->board[i1] == '.')
+				res = res + ft_next_point(st, i1);
+			i1++;
+			i++;
+		}
+		ft_put_res(st, cors, res);
+		cors = cors->next;
+	}
 }
