@@ -28,7 +28,7 @@ $(NAME): $(SRC)
 clean:
 		@rm -f *.o
 fclean:
-		make clean
+		@make clean
 		@rm -f $(NAME)
 re:
 		@make fclean 
