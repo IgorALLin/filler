@@ -10,26 +10,27 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libfiller.a
+NAME = filler
 HEADER = filler.h
-SRC = filler.c ft_atoi.c ft_isascii.c ft_isdigit.c ft_memalloc.c ft_memset.c ft_putchar.c ft_putnbr.c ft_putstr.c ft_strcat.c ft_strchr.c ft_strcpy.c ft_strdel.c ft_strdup.c ft_strjoin.c ft_strlen.c ft_strnew.c ft_strsplit.c ft_strstr.c ft_strsub.c game.c get_next_line.c manhattan.c map00.c read.c utilities.c
-OBJ = $(SRC:.c=.o)
-FLAGS = -c
+SRC = filler.c game.c get_next_line.c manhattan.c map00.c read.c utilities.c
+FLAGS = -Wall -Wextra -Werror
 CC = gcc
+LIBFT	= libft/libft.a
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(FLAGS) $(SRC)
-	ar rc $(NAME) $(OBJ)
-	$(CC) filler.c -o filler -L. -lfiller
+$(NAME): $(SRC)
+	@make -C ./libft
+	@make clean -C ./libft
+	@$(CC) $(FLAGS) -c $(SRC) 
+	@$(CC) -o $(NAME) $(SRC) $(LIBFT)
+	make clean
 clean:
-		@rm -f $(OBJ)
+		@rm -f *.o
 fclean:
 		make clean
 		@rm -f $(NAME)
 re:
-		make fclean 
-		make all
-		@ar rc $(NAME) $(OBJ)
-		make clean
+		@make fclean 
+		@make all
+		@make clean
